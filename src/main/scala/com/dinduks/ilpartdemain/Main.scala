@@ -29,6 +29,7 @@ object Main {
       run(new File(itemsFileName), new File(processedItemsFileName), delay, to, cc)
     } catch {
       case e: Throwable =>
+        e.printStackTrace()
         sendErrorEmail(e, to)
         main(args)
     }
