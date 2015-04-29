@@ -31,6 +31,7 @@ object Main {
       case e: Throwable =>
         e.printStackTrace()
         sendErrorEmail(e, to)
+        Thread.sleep(5 * 60 * 1000)
         main(args)
     }
   }
