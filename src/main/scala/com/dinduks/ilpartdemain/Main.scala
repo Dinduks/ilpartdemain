@@ -70,7 +70,7 @@ object Main {
     email.setHostName(Config.email.smtp.host)
     email.setSmtpPort(Config.email.smtp.port)
     email.setAuthenticator(new DefaultAuthenticator(Config.email.smtp.username, Config.email.smtp.password))
-    email.setSSL(true)
+    email.setSSL(Config.email.smtp.ssl)
     email.setFrom(Config.email.from.email, Config.email.from.name)
     email.setSubject(subject)
     email.setMsg(body)
