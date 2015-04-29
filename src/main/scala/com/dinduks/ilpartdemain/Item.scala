@@ -1,4 +1,4 @@
-package com.dinduks.lesuperboncoin
+package com.dinduks.ilpartdemain
 
 case class Item(title: String, location: String, price: Long, link: java.net.URL) {
   def id: String = {

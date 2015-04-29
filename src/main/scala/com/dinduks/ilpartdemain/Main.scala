@@ -1,4 +1,4 @@
-package com.dinduks.lesuperboncoin
+package com.dinduks.ilpartdemain
 
 import java.io.File
 import java.net.URL
@@ -35,7 +35,7 @@ object Main {
   }
 
   private def run(itemsFile: File, processedItemsFile: File, delay: Long, to: String, cc: Option[String]) {
-    val urls = readSearchURLs(itemsFile)
+    val urls = readSearchURLs(Source.fromFile(itemsFile))
     while (true) {
       val processedItems = Source.fromFile(processedItemsFile).getLines().toList
       val itemsInfo = urls.flatMap(Scraper.getItemsInfo)
@@ -77,9 +77,9 @@ object Main {
     email.send
   }
 
-  private def readSearchURLs(file: File): Seq[URL] = Source
-    .fromFile(file)
+  def readSearchURLs(source: Source): Seq[URL] = source
     .getLines()
-    .map(line => new URL(line.split("#")(0)))
+    .filter(line => !line.trim.isEmpty && !line.startsWith("#"))
+    .map(new URL(_))
     .toList
 }

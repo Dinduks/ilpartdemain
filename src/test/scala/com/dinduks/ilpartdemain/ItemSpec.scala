@@ -1,6 +1,7 @@
+package com.dinduks.ilpartdemain
+
 import java.net.URL
 
-import com.dinduks.lesuperboncoin.Item
 import org.scalatest._
 import org.scalatest.matchers.ShouldMatchers
 

@@ -1,4 +1,4 @@
-package com.dinduks.lesuperboncoin
+package com.dinduks.ilpartdemain
 
 import java.net.URL
 
