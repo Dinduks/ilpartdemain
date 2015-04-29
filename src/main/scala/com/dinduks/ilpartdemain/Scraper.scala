@@ -30,12 +30,15 @@ object Scraper {
           parsePrice(price.replaceAll("\\u00A0€", ""))
         }
 
-        new Item(title.getOrElse("_"),
-          location.getOrElse("_"),
-          price.getOrElse(-1L),
-          time.getOrElse("_"),
-          link.get)
+        link.map { link =>
+          new Item(title.getOrElse("_"),
+            location.getOrElse("_"),
+            price.getOrElse(-1L),
+            time.getOrElse("_"),
+            link)
+        }
       }
+      .flatten
   }
 
   private def parsePrice(price: String): Long =
