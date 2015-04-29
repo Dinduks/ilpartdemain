@@ -25,7 +25,13 @@ object Main {
     val to                     = args(3)
     val cc                     = Try(args(4)).map(Option(_)).getOrElse(None)
 
-    run(new File(itemsFileName), new File(processedItemsFileName), delay, to, cc)
+    try {
+      run(new File(itemsFileName), new File(processedItemsFileName), delay, to, cc)
+    } catch {
+      case e: Throwable =>
+        sendErrorEmail(e, to)
+        main(args)
+    }
   }
 
   private def run(itemsFile: File, processedItemsFile: File, delay: Long, to: String, cc: Option[String]) {
@@ -37,7 +43,7 @@ object Main {
       val newProcessedItems = itemsInfo
         .filterNot(item => processedItems.contains(item.id))
         .map { item =>
-          sendEmail(item, to, cc)
+          sendItemEmail(item, to, cc)
           item.id
         }
 
@@ -47,15 +53,25 @@ object Main {
     }
   }
 
-  private def sendEmail(item: Item, to: String, cc: Option[String]) {
+  private def sendItemEmail(item: Item, to: String, cc: Option[String]): Unit = {
+    val subject = s"${Config.email.subjectPrefix} New item: ${item.title}"
+    sendEmail(subject, item.toString, to: String, cc: Option[String])
+  }
+
+  private def sendErrorEmail(e: Throwable, to: String): Unit = {
+    val subject = s"${Config.email.subjectPrefix} Exception thrown"
+    sendEmail(subject, e.getStackTrace.toString, to: String)
+  }
+
+  private def sendEmail(subject: String, body: String, to: String, cc: Option[String] = None) {
     val email = new SimpleEmail
     email.setHostName(Config.email.smtp.host)
     email.setSmtpPort(Config.email.smtp.port)
     email.setAuthenticator(new DefaultAuthenticator(Config.email.smtp.username, Config.email.smtp.password))
     email.setSSL(true)
     email.setFrom(Config.email.from.email, Config.email.from.name)
-    email.setSubject(Config.email.subject + item.title)
-    email.setMsg(item.toString)
+    email.setSubject(subject)
+    email.setMsg(body)
     email.addTo(to)
     cc.foreach(email.addCc)
     email.send

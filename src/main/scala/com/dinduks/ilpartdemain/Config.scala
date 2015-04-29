@@ -6,7 +6,7 @@ object Config {
   private val config = ConfigFactory.load()
 
   object email {
-    val subject = config.getString("email.subject")
+    val subjectPrefix = config.getString("email.subjectPrefix")
     object from {
       val name  = config.getString("email.from.name")
       val email = config.getString("email.from.email")

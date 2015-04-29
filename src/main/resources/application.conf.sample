@@ -1,4 +1,4 @@
-email.subject = "[LSBC] New item: "
+email.subjectPrefix = "[LBC]"
 email.from.name  = "Le super bon coin"
 email.from.email = "changeme"
 email.smtp.host = "changeme"
