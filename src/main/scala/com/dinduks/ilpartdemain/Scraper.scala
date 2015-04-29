@@ -18,22 +18,24 @@ object Scraper {
       .children
 
     elements
-      .filterNot( element =>
+      .filterNot { element =>
         element.classNames.contains("clear") || element.classNames.contains("oas")
-      )
+      }
       .map { element =>
         val title = Option(element.getElementsByClass("title").text).filterNot(_.isEmpty)
         val location = Option(element.getElementsByClass("placement").text).filterNot(_.isEmpty)
         val link = Option(element.attr("href")).filterNot(_.isEmpty).map(new URL(_))
+        val time = Option(element.getElementsByClass("date").text).filterNot(_.isEmpty)
         val price = Option(element.getElementsByClass("price").text).filterNot(_.isEmpty).map { price =>
           parsePrice(price.replaceAll("\\u00A0€", ""))
         }
-        (title, location, price, link) match {
-          case (Some(t), Some(lo), Some(p), Some(li)) => Some(new Item(t, lo, p, li))
-          case _ => None
-        }
+
+        new Item(title.getOrElse("_"),
+          location.getOrElse("_"),
+          price.getOrElse(-1L),
+          time.getOrElse("_"),
+          link.get)
       }
-      .flatten
   }
 
   private def parsePrice(price: String): Long =
