@@ -1,6 +1,6 @@
 package com.dinduks.ilpartdemain
 
-import java.io.File
+import java.io.{PrintWriter, StringWriter, File}
 import java.net.URL
 import java.util.Date
 
@@ -62,7 +62,7 @@ object Main {
 
   private def sendErrorEmail(e: Throwable, to: String): Unit = {
     val subject = s"${Config.email.subjectPrefix} Exception thrown"
-    sendEmail(subject, e.getStackTrace.toString, to: String)
+    sendEmail(subject, getStackTrace(e), to: String)
   }
 
   private def sendEmail(subject: String, body: String, to: String, cc: Option[String] = None) {
@@ -77,6 +77,12 @@ object Main {
     email.addTo(to)
     cc.foreach(email.addCc)
     email.send
+  }
+
+  def getStackTrace(t: Throwable): String = {
+    val sw = new StringWriter()
+    t.printStackTrace(new PrintWriter(sw))
+    sw.toString
   }
 
   def readSearchURLs(source: Source): Seq[URL] = source
