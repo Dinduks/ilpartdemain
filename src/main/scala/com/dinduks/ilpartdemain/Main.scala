@@ -1,7 +1,7 @@
 package com.dinduks.ilpartdemain
 
 import java.io.{PrintWriter, StringWriter, File}
-import java.net.URL
+import java.net.{SocketTimeoutException, URL}
 import java.util.Date
 
 import org.apache.commons.io.FileUtils
@@ -28,7 +28,11 @@ object Main {
     try {
       run(new File(itemsFileName), new File(processedItemsFileName), delay, to, cc)
     } catch {
-      case e: Throwable =>
+      case e: SocketTimeoutException =>
+        e.printStackTrace()
+        Thread.sleep(5 * 60 * 1000)
+        main(args)
+      case e: Throwable              =>
         e.printStackTrace()
         sendErrorEmail(e, to)
         Thread.sleep(5 * 60 * 1000)
