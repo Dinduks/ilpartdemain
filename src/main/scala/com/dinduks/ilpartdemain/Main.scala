@@ -70,6 +70,7 @@ object Main {
 
   private def sendEmail(subject: String, body: String, to: String, cc: Option[String] = None) {
     val email = new HtmlEmail
+    email.setCharset("utf-8")
     email.setHostName(Config.email.smtp.host)
     email.setSmtpPort(Config.email.smtp.port)
     email.setAuthenticator(new DefaultAuthenticator(Config.email.smtp.username, Config.email.smtp.password))
