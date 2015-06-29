@@ -29,13 +29,15 @@ object Scraper {
         val price = Option(element.getElementsByClass("price").text).filterNot(_.isEmpty).map { price =>
           parsePrice(price.replaceAll("\\u00A0€", ""))
         }
+        val image = element.getElementsByTag("img").headOption.map(tag => new URL(tag.attr("src")))
 
         link.map { link =>
           new Item(title.getOrElse("_"),
             location.getOrElse("_"),
             price.getOrElse(-1L),
             time.getOrElse("_"),
-            link)
+            link,
+            image)
         }
       }
       .flatten

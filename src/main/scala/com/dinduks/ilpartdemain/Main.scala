@@ -5,8 +5,7 @@ import java.net.{SocketTimeoutException, URL}
 import java.util.Date
 
 import org.apache.commons.io.FileUtils
-import org.apache.commons.mail.DefaultAuthenticator
-import org.apache.commons.mail.SimpleEmail
+import org.apache.commons.mail.{HtmlEmail, DefaultAuthenticator}
 
 import scala.collection.JavaConversions._
 import scala.io.Source
@@ -61,7 +60,7 @@ object Main {
 
   private def sendItemEmail(item: Item, to: String, cc: Option[String]): Unit = {
     val subject = s"${Config.email.subjectPrefix} New item: ${item.title}"
-    sendEmail(subject, item.toString, to: String, cc: Option[String])
+    sendEmail(subject, item.toEmail.toString, to: String, cc: Option[String])
   }
 
   private def sendErrorEmail(e: Throwable, to: String): Unit = {
@@ -70,7 +69,7 @@ object Main {
   }
 
   private def sendEmail(subject: String, body: String, to: String, cc: Option[String] = None) {
-    val email = new SimpleEmail
+    val email = new HtmlEmail
     email.setHostName(Config.email.smtp.host)
     email.setSmtpPort(Config.email.smtp.port)
     email.setAuthenticator(new DefaultAuthenticator(Config.email.smtp.username, Config.email.smtp.password))
