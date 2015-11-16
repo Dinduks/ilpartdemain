@@ -25,7 +25,7 @@ case class Item(title: String,
       |    <li>Location: $location</li>
       |    <li>Price: ${if (price >= 0) price else "N/A"}</li>
       |    <li>Time: $time</li>
-      |    <li>Link: $link</li>
+      |    <li>Link: <a href="$link">$link</a></li>
       |  </ul>
       |</body>
       |</html>
