@@ -26,12 +26,12 @@ object Scraper {
         } flatMap { element =>
           val title = Option(element.getElementsByClass("title").text).filterNot(_.isEmpty)
           val location = Option(element.getElementsByClass("placement").text).filterNot(_.isEmpty)
-          val link = Option(element.attr("href")).filterNot(_.isEmpty).map(new URL(_))
+          val link = Option(element.attr("href")).filterNot(_.isEmpty).map(buildURL)
           val time = Option(element.getElementsByClass("date").text).filterNot(_.isEmpty)
           val price = Option(element.getElementsByClass("price").text).filterNot(_.isEmpty).map { price =>
             parsePrice(price.replaceAll("\\u00A0€", ""))
           }
-          val image = element.getElementsByTag("img").headOption.map(tag => new URL(tag.attr("src")))
+          val image = element.getElementsByTag("img").headOption.map(tag => buildURL(tag.attr("src")))
 
           link.map { link =>
             new Item(title.getOrElse("_"),
@@ -43,6 +43,11 @@ object Scraper {
           }
         }
     }
+  }
+
+  def buildURL(url: String): URL = {
+    if (url.startsWith("//")) new URL("http:" + url)
+    else new URL(url)
   }
 
   private def parsePrice(price: String): Long =
