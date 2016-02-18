@@ -58,6 +58,12 @@ object Main {
     }
   }
 
+  def getURLsOfItems(source: Source): Seq[URL] = source
+    .getLines
+    .filter(line => !line.trim.isEmpty && !line.startsWith("#"))
+    .map(new URL(_))
+    .toList
+
   def getProcessedItems(source: Source) = source.getLines.toSet.toList
 
   private def sendItemEmail(item: Item, to: String, cc: Option[String]): Unit = {
@@ -67,7 +73,7 @@ object Main {
 
   private def sendErrorEmail(e: Throwable, to: String): Unit = {
     val subject = s"${Config.email.subjectPrefix} Exception thrown"
-    sendEmail(subject, getStackTrace(e), to: String)
+    sendEmail(subject, e, to: String)
   }
 
   private def sendEmail(subject: String, body: String, to: String, cc: Option[String] = None) {
@@ -85,15 +91,9 @@ object Main {
     email.send
   }
 
-  def getStackTrace(t: Throwable): String = {
+  private implicit def getStackTrace(t: Throwable): String = {
     val sw = new StringWriter()
     t.printStackTrace(new PrintWriter(sw))
     sw.toString
   }
-
-  def getURLsOfItems(source: Source): Seq[URL] = source
-    .getLines
-    .filter(line => !line.trim.isEmpty && !line.startsWith("#"))
-    .map(new URL(_))
-    .toList
 }
