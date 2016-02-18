@@ -40,8 +40,8 @@ object Main {
   }
 
   private def run(watchedItemsFile: File, processedItemsFile: File, delay: Long, to: String, cc: Option[String]) {
-    val urls = getURLsOfItems(Source.fromFile(watchedItemsFile))
     while (true) {
+      val urls = getURLsOfItems(Source.fromFile(watchedItemsFile))
       val processedItems = getProcessedItems(Source.fromFile(processedItemsFile))
       val itemsInfo = urls.flatMap(Scraper.getItemsInfo)
       println(s"${new Date} — Processing ${itemsInfo.size} items(s)…")
