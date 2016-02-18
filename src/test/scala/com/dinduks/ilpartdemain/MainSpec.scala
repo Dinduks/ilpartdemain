@@ -1,11 +1,18 @@
 package com.dinduks.ilpartdemain
 
+import java.net.URL
+
+import com.google.inject.Guice
+import net.codingwell.scalaguice.InjectorExtensions._
 import org.scalatest._
 import org.scalatest.matchers.ShouldMatchers
 
 import scala.io.Source
 
 class MainSpec extends FunSpec with ShouldMatchers {
+  val injector = Guice.createInjector()
+  val program = new Program(injector.instance[Scraper])
+
   describe("Main") {
     describe("readSearchURLs") {
       val source = Source.fromString(
@@ -20,7 +27,7 @@ class MainSpec extends FunSpec with ShouldMatchers {
           |
         """.stripMargin)
 
-      val l = Main.getURLsOfItems(source)
+      val l = program.getURLsOfItems(source)
       l(0).toString should be("http://foo")
       l(1).toString should be("http://baz")
       l(2).toString should be("http://herp")
@@ -30,9 +37,21 @@ class MainSpec extends FunSpec with ShouldMatchers {
     describe("getProcessedItems") {
       val source = Source.fromString("url0\nurl0")
 
-      val items = Main.getProcessedItems(source)
+      val items = program.getProcessedItems(source)
       items.size should be(1)
       items.headOption should be(Some("url0"))
+    }
+
+    describe("getItemsInfo") {
+      class MyScaper extends Scraper {
+        override def getItemsInfo(url: URL) = Item("", "", -1, "", null) :: Nil
+      }
+
+      val program = new Program(new MyScaper)
+
+      val urls = new URL("http://foo.com") :: new URL("http://bar.com") :: Nil
+      val itemsInfo = program.getItemsInfo(urls)
+      itemsInfo.size should be(1)
     }
   }
 }

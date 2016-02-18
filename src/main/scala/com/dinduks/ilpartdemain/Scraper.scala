@@ -4,13 +4,12 @@ import java.net.URL
 
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.jsoup.select.Elements
 import us.codecraft.xsoup.Xsoup
 
 import scala.collection.JavaConversions._
 import scala.util.{Success, Failure, Try}
 
-object Scraper {
+class Scraper {
   def getItemsInfo(url: URL): Seq[Item] = {
     val doc: Document = Jsoup.connect(url.toURI.toASCIIString).get
     val triedContainer = Try(Xsoup.compile("//div[contains(@class, \"list-lbc\")]")
