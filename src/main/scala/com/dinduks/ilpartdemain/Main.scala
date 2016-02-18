@@ -1,6 +1,6 @@
 package com.dinduks.ilpartdemain
 
-import java.io.{PrintWriter, StringWriter, File}
+import java.io._
 import java.net.{SocketTimeoutException, URL}
 import java.util.Date
 
@@ -31,7 +31,7 @@ object Main {
         e.printStackTrace()
         Thread.sleep(5 * 60 * 1000)
         main(args)
-      case e: Throwable              =>
+      case e: Throwable =>
         e.printStackTrace()
         sendErrorEmail(e, to)
         Thread.sleep(5 * 60 * 1000)
@@ -39,10 +39,10 @@ object Main {
     }
   }
 
-  private def run(itemsFile: File, processedItemsFile: File, delay: Long, to: String, cc: Option[String]) {
-    val urls = readSearchURLs(Source.fromFile(itemsFile))
+  private def run(watchedItemsFile: File, processedItemsFile: File, delay: Long, to: String, cc: Option[String]) {
+    val urls = getURLsOfItems(Source.fromFile(watchedItemsFile))
     while (true) {
-      val processedItems = Source.fromFile(processedItemsFile).getLines().toList
+      val processedItems = getProcessedItems(Source.fromFile(processedItemsFile))
       val itemsInfo = urls.flatMap(Scraper.getItemsInfo)
       println(s"${new Date} — Processing ${itemsInfo.size} items(s)…")
       val newProcessedItems = itemsInfo
@@ -57,6 +57,8 @@ object Main {
       Thread.sleep(delay)
     }
   }
+
+  def getProcessedItems(source: Source) = source.getLines.toSet.toList
 
   private def sendItemEmail(item: Item, to: String, cc: Option[String]): Unit = {
     val subject = s"${Config.email.subjectPrefix} New item: ${item.title}"
@@ -89,8 +91,8 @@ object Main {
     sw.toString
   }
 
-  def readSearchURLs(source: Source): Seq[URL] = source
-    .getLines()
+  def getURLsOfItems(source: Source): Seq[URL] = source
+    .getLines
     .filter(line => !line.trim.isEmpty && !line.startsWith("#"))
     .map(new URL(_))
     .toList

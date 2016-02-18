@@ -20,11 +20,19 @@ class MainSpec extends FunSpec with ShouldMatchers {
           |
         """.stripMargin)
 
-      val l = Main.readSearchURLs(source)
+      val l = Main.getURLsOfItems(source)
       l(0).toString should be("http://foo")
       l(1).toString should be("http://baz")
       l(2).toString should be("http://herp")
       l(3).toString should be("http://derp")
+    }
+
+    describe("getProcessedItems") {
+      val source = Source.fromString("url0\nurl0")
+
+      val items = Main.getProcessedItems(source)
+      items.size should be(1)
+      items.headOption should be(Some("url0"))
     }
   }
 }
