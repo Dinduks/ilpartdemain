@@ -2,6 +2,8 @@ package com.dinduks.ilpartdemain
 
 import java.net.URL
 
+import scala.io.Source
+
 case class Item(title: String,
                 location: String,
                 price: Long,
@@ -30,4 +32,16 @@ case class Item(title: String,
       |</body>
       |</html>
     """.stripMargin.trim
+}
+
+object Item {
+  def getItemsInfo(urls: Seq[URL])(implicit scraper: Scraper) = urls.flatMap(scraper.getItemsInfo).distinct
+
+  def getURLsOfItems(source: Source): Seq[URL] = source
+    .getLines
+    .filter(line => !line.trim.isEmpty && !line.startsWith("#"))
+    .map(new URL(_))
+    .toSeq
+
+  def getProcessedItems(source: Source): Seq[String] = source.getLines.toList.distinct
 }

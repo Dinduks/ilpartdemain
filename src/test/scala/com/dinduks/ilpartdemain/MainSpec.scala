@@ -11,7 +11,11 @@ import scala.io.Source
 
 class MainSpec extends FunSpec with ShouldMatchers {
   val injector = Guice.createInjector()
-  val program = new Program(injector.instance[Scraper])
+
+  private implicit val scraper = injector.instance[Scraper]
+  private val mailer = injector.instance[Mailer]
+
+  val program = new Program(scraper, mailer)
 
   describe("Main") {
     describe("readSearchURLs") {
@@ -27,7 +31,7 @@ class MainSpec extends FunSpec with ShouldMatchers {
           |
         """.stripMargin)
 
-      val l = program.getURLsOfItems(source)
+      val l = Item.getURLsOfItems(source)
       l(0).toString should be("http://foo")
       l(1).toString should be("http://baz")
       l(2).toString should be("http://herp")
@@ -37,7 +41,7 @@ class MainSpec extends FunSpec with ShouldMatchers {
     describe("getProcessedItems") {
       val source = Source.fromString("url0\nurl0")
 
-      val items = program.getProcessedItems(source)
+      val items = Item.getProcessedItems(source)
       items.size should be(1)
       items.headOption should be(Some("url0"))
     }
@@ -47,10 +51,8 @@ class MainSpec extends FunSpec with ShouldMatchers {
         override def getItemsInfo(url: URL) = Item("", "", -1, "", null) :: Nil
       }
 
-      val program = new Program(new MyScaper)
-
       val urls = new URL("http://foo.com") :: new URL("http://bar.com") :: Nil
-      val itemsInfo = program.getItemsInfo(urls)
+      val itemsInfo = Item.getItemsInfo(urls)(new MyScaper)
       itemsInfo.size should be(1)
     }
   }
