@@ -1,6 +1,7 @@
 package com.dinduks.ilpartdemain
 
 import java.io._
+import java.net.URL
 import java.util.Date
 import javax.inject.Inject
 
@@ -11,10 +12,14 @@ import scala.collection.JavaConversions._
 import scala.io.Source
 
 class Program @Inject() (scraper: Scraper, mailer: Mailer) {
-  def run(watchedItemsFile: File, processedItemsFile: File, delay: Long, to: String, cc: Option[String]) {
+  def run(watchedItemsFilename: String, processedItemsFilename: String, delay: Long, to: String, cc: Option[String]) {
     while (true) {
-      val urls = getURLsOfItems(Source.fromFile(watchedItemsFile))
-      val processedItems: Seq[String] = getProcessedItems(Source.fromFile(processedItemsFile))
+      val urlsSource = Source.fromFile(watchedItemsFilename)
+      val processedItemsSource = Source.fromFile(processedItemsFilename)
+
+      val urls: Seq[URL] = getURLsOfItems(urlsSource)
+      val processedItems: Seq[String] = getProcessedItems(processedItemsSource)
+
       val itemsInfo = getItemsInfo(urls)(scraper)
       println(s"${new Date} — Processing ${itemsInfo.size} items(s)…")
       val newProcessedItems: Seq[String] = itemsInfo
@@ -24,7 +29,10 @@ class Program @Inject() (scraper: Scraper, mailer: Mailer) {
           item.id
         }
 
-      FileUtils.writeLines(processedItemsFile, processedItems ++ newProcessedItems)
+      FileUtils.writeLines(new File(processedItemsFilename), processedItems ++ newProcessedItems)
+
+      urlsSource.close()
+      processedItemsSource.close()
 
       Thread.sleep(delay)
     }

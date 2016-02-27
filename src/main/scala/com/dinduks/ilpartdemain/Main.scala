@@ -22,7 +22,7 @@ object Main {
 
     try {
       val program = new Program(new Scraper, mailer)
-      program.run(new File(itemsFileName), new File(processedItemsFileName), delay, to, cc)
+      program.run(itemsFileName, processedItemsFileName, delay, to, cc)
     } catch {
       case e: SocketTimeoutException =>
         e.printStackTrace()
