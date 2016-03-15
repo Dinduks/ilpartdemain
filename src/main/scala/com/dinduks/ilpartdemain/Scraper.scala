@@ -12,25 +12,28 @@ import scala.util.{Success, Failure, Try}
 class Scraper {
   def getItemsInfo(url: URL): Seq[Item] = {
     val doc: Document = Jsoup.connect(url.toURI.toASCIIString).get
-    val triedContainer = Try(Xsoup.compile("//div[contains(@class, \"list-lbc\")]")
+    val eventualContainer = Try(Xsoup.compile("//ul[contains(@class, \"tabsContent\")]")
       .evaluate(doc)
       .getElements
       .get(0))
 
-    triedContainer match {
+    eventualContainer match {
       case Failure(_) => Nil
       case Success(container) =>
         container.children filterNot { element =>
-          element.classNames.contains("clear") || element.classNames.contains("oas")
+          element.classNames.contains("apn-na") || element.classNames.contains("oas")
         } flatMap { element =>
-          val title = Option(element.getElementsByClass("title").text).filterNot(_.isEmpty)
-          val location = Option(element.getElementsByClass("placement").text).filterNot(_.isEmpty)
-          val link = Option(element.attr("href")).filterNot(_.isEmpty).map(buildURL)
-          val time = Option(element.getElementsByClass("date").text).filterNot(_.isEmpty)
-          val price = Option(element.getElementsByClass("price").text).filterNot(_.isEmpty).map { price =>
+          val title = Option(element.getElementsByClass("item_title").text).filterNot(_.isEmpty)
+          val location = Option(element.getElementsByClass("item_supp")(1).text).filterNot(_.isEmpty)
+          val link = Option(element.getElementsByClass("list_item").attr("href")).map(buildURL)
+          val time = Option(element.getElementsByClass("item_supp")(2).text).filterNot(_.isEmpty)
+          val price = Option(element.getElementsByClass("item_price").text).filterNot(_.isEmpty).map { price =>
             parsePrice(price.replaceAll("\\u00A0€", ""))
           }
-          val image = element.getElementsByTag("img").headOption.map(tag => buildURL(tag.attr("src")))
+          val image = for {
+            tag <- element.getElementsByClass("item_imagePic").headOption
+            subTag <- tag.children.headOption
+          } yield buildURL("https:" + subTag.attr("data-imgSrc"))
 
           link.map { link =>
             new Item(title.getOrElse("_"),
