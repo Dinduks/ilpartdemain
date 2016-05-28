@@ -12,7 +12,7 @@ import scala.util.{Success, Failure, Try}
 class Scraper {
   def getItemsInfo(url: URL): Seq[Item] = {
     val doc: Document = Jsoup.connect(url.toURI.toASCIIString).get
-    val eventualContainer = Try(Xsoup.compile("//ul[contains(@class, \"tabsContent\")]")
+    val eventualContainer = Try(Xsoup.compile("//ul[contains(@class, \"dontSwitch\")]")
       .evaluate(doc)
       .getElements
       .get(0))
