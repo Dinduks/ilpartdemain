@@ -12,7 +12,8 @@ import scala.collection.JavaConversions._
 import scala.io.Source
 
 class Program @Inject() (scraper: Scraper, mailer: Mailer) {
-  def run(watchedItemsFilename: String, processedItemsFilename: String, delay: Long, to: String, cc: Option[String]) {
+  def run(watchedItemsFilename: String, processedItemsFilename: String,
+          delayMins: Long, to: String, cc: Option[String]) {
     while (true) {
       val urlsSource = Source.fromFile(watchedItemsFilename)
       val processedItemsSource = Source.fromFile(processedItemsFilename)
@@ -34,7 +35,7 @@ class Program @Inject() (scraper: Scraper, mailer: Mailer) {
       urlsSource.close()
       processedItemsSource.close()
 
-      Thread.sleep(delay)
+      Thread.sleep(delayMins * 1000 * 60)
     }
   }
 }

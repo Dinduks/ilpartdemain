@@ -19,4 +19,12 @@ object Config {
       val password = config.getString("email.smtp.password")
     }
   }
+
+  object app {
+    val itemsFileName = config.getString("app.items.filename")
+    val processedItemsFileName = config.getString("app.processed.items.filename")
+    val delayMins = config.getInt("app.delay_minutes")
+    val to = config.getString("app.to")
+    val cc = Option(config.getString("app.cc")).filter(_.nonEmpty)
+  }
 }
