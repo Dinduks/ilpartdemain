@@ -28,7 +28,7 @@ class Scraper {
           val link = Option(element.getElementsByClass("list_item").attr("href")).map(buildURL)
           val time = Option(element.getElementsByClass("item_supp")(2).text).filterNot(_.isEmpty)
           val price = Option(element.getElementsByClass("item_price").text).filterNot(_.isEmpty).map { price =>
-            parsePrice(price.replaceAll("\\u00A0€", ""))
+            parsePrice(price.replaceAll("\\u00A0€( (C|H).C.)?", ""))
           }
           val image = for {
             tag <- element.getElementsByClass("item_imagePic").headOption
