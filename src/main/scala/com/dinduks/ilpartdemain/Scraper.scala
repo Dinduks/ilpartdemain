@@ -24,9 +24,13 @@ class Scraper {
           element.classNames.contains("apn-na") || element.classNames.contains("oas")
         } flatMap { element =>
           val title = Option(element.getElementsByClass("item_title").text).filterNot(_.isEmpty)
-          val location = Option(element.getElementsByClass("item_supp")(1).text).filterNot(_.isEmpty)
-          val link = Option(element.getElementsByClass("list_item").attr("href")).map(buildURL)
-          val time = Option(element.getElementsByClass("item_supp")(2).text).filterNot(_.isEmpty)
+          val location = if (element.getElementsByClass("item_supp").size >= 2) {
+            Option(element.getElementsByClass("item_supp")(1).text).filterNot(_.isEmpty)
+          } else { None }
+          val link = Option(element.getElementsByClass("list_item").attr("href")).filter(_.nonEmpty).map(buildURL)
+          val time = if (element.getElementsByClass("item_supp").size >= 3) {
+            Option(element.getElementsByClass("item_supp")(2).text).filterNot(_.isEmpty)
+          } else { None }
           val price = Option(element.getElementsByClass("item_price").text).filterNot(_.isEmpty).map { price =>
             parsePrice(price.replaceAll("\\u00A0€( (C|H).C.)?", ""))
           }
