@@ -1,24 +1,28 @@
 # Il Part Demain
-This application sends you an alert everytime an item that might interest you
+This application sends an alert everytime an item of interest
 shows up on *leboncoin.fr*, so you can enjoy them good deals before everyone
 else.
 
-## Configuration
+## Usage
+
 ```
-cp src/main/resources/application.conf{.sample,}
-vi src/main/resources/application.conf
+sbt assembly
+docker build -t ilpartdemain .
 
 touch data/processed_items.txt
-
 cp data/watched_items.txt{.sample,}
 vi data/watched_items.txt
+
+cp .env-sample .env
+vi .env
+
+docker run -d --name ilpartdemain -v $PWD/data:/data --env-file .env ilpartdemain
+
+docker logs -f ilpartdemain
 ```
 
-*data/watched_items.txt* contains URLs of results from *leboncoin.fr*.  
+*data/watched_items.txt* contains URLs of results from *leboncoin.fr*.
 Use the website to search for the items you'd like to watch, using the filters
 if you wish, then copy the URL of the results in the file; one URL per line.
 
-## Run
-```
-./activator "run data/watched_items.txt data/processed_items.txt <refresh_delay> <to_email_addr> <cc_email_addr>"
-```
+You don't use Docker? 1998 just called, and they're looking for you.
