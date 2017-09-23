@@ -5,10 +5,16 @@ else.
 
 ## Usage
 
+Build the image:
+
 ```
 sbt assembly
 docker build -t ilpartdemain .
+```
 
+Use the image:
+
+```
 touch data/processed_items.txt
 cp data/watched_items.txt{.sample,}
 vi data/watched_items.txt
@@ -17,8 +23,6 @@ cp .env-sample .env
 vi .env
 
 docker run -d --name ilpartdemain -v $PWD/data:/data --env-file .env ilpartdemain
-
-docker logs -f ilpartdemain
 ```
 
 *data/watched_items.txt* contains URLs of results from *leboncoin.fr*.
