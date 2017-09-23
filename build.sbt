@@ -1,4 +1,4 @@
-name := """lesuperboncoin"""
+name := """ilpartdemain"""
 
 version := "1.0"
 
