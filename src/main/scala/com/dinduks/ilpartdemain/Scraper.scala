@@ -21,7 +21,9 @@ class Scraper {
       case Failure(_) => Nil
       case Success(container) =>
         container.children filterNot { element =>
-          element.classNames.contains("apn-na") || element.classNames.contains("oas")
+          element.classNames.contains("apn-na") ||
+            element.classNames.contains("oas") ||
+            element.classNames.contains("vl")
         } flatMap { element =>
           val title = Option(element.getElementsByClass("item_title").text).filterNot(_.isEmpty)
           val location = Option(element.getElementsByClass("item_supp")(1).text).filterNot(_.isEmpty)
