@@ -5,6 +5,6 @@
 /project/target/
 /target/
 
-src/main/resources/application.conf
 data/processed_items.txt
 data/watched_items.txt
+.env

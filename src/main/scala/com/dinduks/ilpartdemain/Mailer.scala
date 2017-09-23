@@ -27,7 +27,7 @@ class Mailer {
     email.setMsg(body)
     email.addTo(to)
     cc.foreach(email.addCc)
-    email.send
+    email.send()
   }
 
   private implicit def getStackTrace(t: Throwable): String = {

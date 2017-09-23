@@ -1,8 +1,0 @@
-email.subjectPrefix = "[LBC]"
-email.from.name  = "Le super bon coin"
-email.from.email = "changeme"
-email.smtp.host = "changeme"
-email.smtp.port = 465
-email.smtp.ssl  = true
-email.smtp.username = "changeme"
-email.smtp.password = "changeme"
