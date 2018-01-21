@@ -35,7 +35,7 @@ class Scraper {
           val image = for {
             tag <- element.getElementsByClass("item_imagePic").headOption
             subTag <- tag.children.headOption
-          } yield buildURL("https:" + subTag.attr("data-imgSrc"))
+          } yield buildURL(subTag.attr("data-imgsrc"))
 
           link.map { link =>
             new Item(title.getOrElse("_"),
