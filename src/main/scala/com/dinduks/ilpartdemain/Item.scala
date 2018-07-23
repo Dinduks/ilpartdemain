@@ -11,7 +11,7 @@ case class Item(title: String,
                 link: URL,
                 thumbnailURL: Option[URL] = None) {
   def id: String = {
-    link.toString.replaceAll("http.?://(www\\.)?leboncoin\\.fr/.*/", "").replaceAll("\\.htm.*", "")
+    link.toString.replaceAll("http.?://(www\\.)?leboncoin\\.fr/[a-z_]*/", "").replaceAll("\\.htm.*", "")
   }
 
   override def toString: String = {

@@ -15,11 +15,11 @@ class Program @Inject() (scraper: Scraper, mailer: Mailer) {
   def run(watchedItemsFilename: String, processedItemsFilename: String,
           delayMins: Long, to: String, cc: Option[String]) {
     while (true) {
-      val urlsSource = Source.fromFile(watchedItemsFilename)
-      val processedItemsSource = Source.fromFile(processedItemsFilename)
+      val urlsFile = Source.fromFile(watchedItemsFilename)
+      val processedItemsFile = Source.fromFile(processedItemsFilename)
 
-      val urls: Seq[URL] = getURLsOfItems(urlsSource)
-      val processedItems: Seq[String] = getProcessedItems(processedItemsSource)
+      val urls: Seq[URL] = getURLsOfItems(urlsFile)
+      val processedItems: Seq[String] = getProcessedItems(processedItemsFile)
 
       val itemsInfo = getItemsInfo(urls)(scraper)
       println(s"${new Date} — Processing ${itemsInfo.size} items(s)…")
@@ -32,8 +32,8 @@ class Program @Inject() (scraper: Scraper, mailer: Mailer) {
 
       FileUtils.writeLines(new File(processedItemsFilename), processedItems ++ newProcessedItems)
 
-      urlsSource.close()
-      processedItemsSource.close()
+      urlsFile.close()
+      processedItemsFile.close()
 
       Thread.sleep(delayMins * 1000 * 60)
     }

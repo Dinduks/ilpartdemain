@@ -12,12 +12,19 @@ class ScraperSpec extends FunSpec with ShouldMatchers {
     describe("buildURL") {
       it("should add the protocol to URL's that don't contain the protocols") {
         val url = scraper.buildURL("//foo.bar/baz")
-        url.getProtocol should be("http")
+        url.getProtocol should be("https")
         url.getHost should be ("foo.bar")
         url.getPath should be("/baz")
       }
 
-      it("should do nothing when the URL contains the protocol") {
+      it("should add the host name to URL's without host") {
+        val url = scraper.buildURL("/baz")
+        url.getProtocol should be("https")
+        url.getHost should be ("www.leboncoin.fr")
+        url.getPath should be("/baz")
+      }
+
+      it("should do nothing when the URL is absolute") {
         val url = scraper.buildURL("https://foo.bar/baz")
         url.getProtocol should be("https")
         url.getHost should be("foo.bar")
